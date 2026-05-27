@@ -63,16 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = e.target.value.toLowerCase();
         
         // Filter logic: 
-        // 1. If it's a talk, match against categories.
-        // 2. Breaks (transitions/lunch) are always visible UNLESS a search term is active 
-        //    and they don't logically belong (we keep them for context or hide them?)
-        // Let's hide breaks when searching to focus on talks.
+        // 1. If it's a talk, match against categories OR speakers.
+        // 2. Breaks (transitions/lunch) are always visible UNLESS a search term is active.
         
         const filteredData = scheduleData.filter(item => {
             if (searchTerm === '') return true;
             if (item.type !== 'talk') return false; // Hide breaks when searching
             
-            return item.categories.some(cat => cat.toLowerCase().includes(searchTerm));
+            const categoryMatch = item.categories.some(cat => cat.toLowerCase().includes(searchTerm));
+            const speakerMatch = item.speakers.some(speaker => speaker.toLowerCase().includes(searchTerm));
+            
+            return categoryMatch || speakerMatch;
         });
 
         renderSchedule(filteredData);
